@@ -14,6 +14,8 @@ clock = pygame.time.Clock()
 game_folder = os.path.dirname(__file__)
 img_folder = os.path.join(game_folder, 'images')
 
+ship_menu_1 = pygame.image.load(os.path.join(img_folder, 'ship1g.png'))
+exit_menu = pygame.image.load(os.path.join(img_folder, 'exit.png'))
 ship_img = pygame.image.load(os.path.join(img_folder, 'ship.png'))
 fon_img = pygame.image.load(os.path.join(img_folder, 'space.jpg'))
 enemy_img = pygame.image.load(os.path.join(img_folder, 'enemy.png'))
@@ -28,7 +30,7 @@ class Player(pygame.sprite.Sprite):
         self.radius = int(self.rect.width / 2)
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
-        
+
     def update(self):
         x_pl, y_pl = pygame.mouse.get_pos()
         self.rect.x = x_pl - ship_img.get_width()/2
@@ -69,7 +71,6 @@ class Bullet(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.y += self.speedy
-        # убить, если он заходит за верхнюю часть экрана
         if self.rect.bottom < 0:
             self.kill()
 
@@ -122,8 +123,32 @@ def show_go_screen():
             if event.type == pygame.KEYUP:
                 waiting = False
 
+def start_menu():
+    global menu, ship_menu, running
+    screen.blit(fon_img, (0, 0))
+    sh1 = screen.blit(ship_menu_1, (WIDTH *0.15, HEIGHT *0.2))
+    ex =  screen.blit(exit_menu, (WIDTH *0.6, HEIGHT *0.4))
+    draw_text(screen, "Нажми на корабль для старта, EXIT - для выхода", 22,  WIDTH / 2, HEIGHT * 0.1)
+
+    pygame.display.flip()
+    waiting = True
+    while waiting:
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                if sh1.collidepoint(pos):
+                    menu = False
+                    waiting = False
+                elif ex.collidepoint(pos):
+                    running = False
+                    waiting = False
+
 score = 0
 
+menu = True
 game_over = False
 running = True
 while running:
@@ -139,6 +164,11 @@ while running:
         for i in range(5):
             new_enemy()
         score = 0
+        menu = True
+
+    if menu:
+        start_menu()
+
 
     clock.tick(FPS)
     screen.blit(fon_img, (0, 0))

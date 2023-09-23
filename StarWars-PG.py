@@ -21,6 +21,8 @@ fon_img = pygame.image.load(os.path.join(img_folder, 'space.jpg'))
 enemy_img = pygame.image.load(os.path.join(img_folder, 'enemy.png'))
 bullet_img = pygame.image.load(os.path.join(img_folder, 'missiles.png'))
 
+#Игровые классы
+
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
